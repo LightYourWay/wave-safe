@@ -1,0 +1,22 @@
+{
+  "name": "wave-safe",
+  "version": "0.0.1",
+  "description": "An windows taskbar app that automatically creates persistent rolling backups of a Waves LV1 instance on the network.",
+  "main": "src/main.js",
+  "bin": "src/main.js",
+  "scripts": {
+    "build": "tsc && pkg . --out-path build/",
+    "start": "node src/main.js",
+    "test": "node debug src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LightYourWay/wave-safe.git"
+  },
+  "author": "Lukas Runge",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LightYourWay/wave-safe/issues"
+  },
+  "homepage": "https://github.com/LightYourWay/wave-safe#readme"
+}
