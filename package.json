@@ -18,5 +18,17 @@
   "bugs": {
     "url": "https://github.com/LightYourWay/wave-safe/issues"
   },
-  "homepage": "https://github.com/LightYourWay/wave-safe#readme"
+  "homepage": "https://github.com/LightYourWay/wave-safe#readme",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "esbuild": "^0.19.7",
+    "pkg": "^5.8.1",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "chokidar": "^3.5.3",
+    "windows-trayicon": "^3.0.1"
+  },
+  "packageManager": "yarn@4.0.2"
 }
