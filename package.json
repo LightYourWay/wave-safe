@@ -5,9 +5,10 @@
   "main": "src/main.js",
   "bin": "src/main.js",
   "scripts": {
-    "build": "tsc && pkg . --out-path build/",
-    "start": "node src/main.js",
-    "test": "node debug src/main.js"
+    "build": "esbuild --platform=node --bundle src/main.ts --outfile=build/main.js && node scripts/copy-native-addons.mjs",
+    "start": "ts-node-dev src/main.ts",
+    "test": "node debug src/main.js",
+    "pkg": "pkg --debug --out-path dist --targets node16-win-x64 build/main.js --config pkg-config.json"
   },
   "repository": {
     "type": "git",
@@ -22,15 +23,19 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "esbuild": "^0.19.7",
+    "node-gyp": "^10.0.1",
     "pkg": "^5.8.1",
+    "trayicon": "^1.2.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.2"
   },
   "dependencies": {
     "bindings": "^1.5.0",
     "chalk": "^5.3.0",
-    "chokidar": "^3.5.3",
-    "windows-trayicon": "^3.0.1"
+    "chokidar": "^3.5.3"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.0.2",
+  "resolutions": {
+    "windows-trayicon/node-gyp": "10.0.1"
+  }
 }

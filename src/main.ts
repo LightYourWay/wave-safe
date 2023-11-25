@@ -1,45 +1,18 @@
-const WindowsTrayicon = require("windows-trayicon");
-const path = require("path");
-const fs = require("fs");
+console.log("test")
+// @ts-ignore
+import Tray from 'trayicon';
 
-const myTrayApp = new WindowsTrayicon({
-	title: "Trayicon Test",
-	icon: path.resolve(__dirname, "icon.ico"),
-	menu: [
-		{
-			id: "item-1-id",
-			caption: "First Item"
-		},
-		{
-			id: "item-2-id",
-			caption: "Second Item"
-		},
-		{
-			id: "item-3-id-exit",
-			caption: "Exit"
-		}
-	]
-});
+(async () => {
 
-myTrayApp.item((id: string) => {
-	console.log(`Menu id selected=${id}`);
-	switch (id) {
-		case "item-1-id": {
-			console.log("First item selected...");
-			break;
-		}
-		case "item-2-id": {
-			myTrayApp.balloon("Hello There!", "This is my message to you").then(() => {
-				console.log("Balloon clicked");
-			})
-			break;
-		}
-		case "item-3-id-exit": {
-			myTrayApp.exit();
-			process.exit(0)
-			break;
-		}
-	}
-});
-
-process.stdin.resume()
+	console.log("imported")
+	const tray = await Tray.create({
+		useTempDir: true,
+	});
+	let main = tray.item("Power");
+	main.add(tray.item("on"), tray.item("on"));
+	
+	let quit = tray.item("Quit", () => tray.kill());
+	tray.setMenu(main, quit);
+	
+	console.log("done")
+})()
