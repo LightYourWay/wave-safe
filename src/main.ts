@@ -1,3 +1,6 @@
-import { tray } from "./tray";
+import { WaveSafe } from "./modules/WaveSafe";
 
-tray();
+(async () => {
+  const App = new WaveSafe();
+  await App.initialize();
+})();
