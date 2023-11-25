@@ -1,3 +1,3 @@
-import { tray } from './tray'
+import { tray } from "./tray";
 
-tray()
+tray();

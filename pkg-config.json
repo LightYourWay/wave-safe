@@ -1,7 +1,5 @@
 {
-	"pkg": {
-		"assets": [
-			"build/rsrcs"
-		]
-	}
+  "pkg": {
+    "assets": ["build/rsrcs"]
+  }
 }
