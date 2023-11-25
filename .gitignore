@@ -132,3 +132,6 @@ dist
 # output build / dist
 build
 dist
+
+# Metadata Files
+.DS_Store
