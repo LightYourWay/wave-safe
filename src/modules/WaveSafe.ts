@@ -25,7 +25,7 @@ export class WaveSafe {
       this.tray.item("2 min"),
     );
 
-    let quit = this.tray.item("Quit", () => this.tray.kill());
+    const quit = this.tray.item("Quit", () => this.tray.kill());
     this.tray.setMenu(intervall, this.tray.separator(), quit);
   }
 
