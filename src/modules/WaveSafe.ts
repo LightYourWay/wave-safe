@@ -10,7 +10,7 @@ export class WaveSafe {
     this.tray = await Tray.create({
       title: "WaveSafe",
       icon: await fs.readFile("src/assets/icon.ico"),
-      action: this.toggleActivation,
+      action: () => this.toggleActivation(),
       useTempDir: true,
     });
 
