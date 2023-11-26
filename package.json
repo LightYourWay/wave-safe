@@ -2,12 +2,15 @@
   "name": "wave-safe",
   "version": "0.0.1",
   "description": "An windows taskbar app that automatically creates persistent rolling backups of a Waves LV1 instance on the network.",
+  "productName": "WaveSafe",
+  "company": "LightYourWay",
+  "copyright": "Copyright WaveSafe contributors. MIT license.",
   "main": "src/main.js",
   "bin": "src/main.js",
   "scripts": {
     "build": "esbuild --platform=node --bundle src/main.ts --outfile=build/main.js && node scripts/copy-native-addons.mjs",
-    "start": "ts-node-dev src/main.ts",
-    "test": "node debug src/main.js",
+    "start": "NODE_ENV=development ts-node-dev src/main.ts",
+    "test": "node debug build/main.js",
     "pkg": "pkg --debug --out-path dist --targets node16-win-x64 build/main.js --config pkg-config.json && node scripts/set-exe-icon.mjs",
     "lint": "npx prettier . --check",
     "format": "npx prettier . --write"
@@ -27,7 +30,7 @@
     "esbuild": "^0.19.7",
     "pkg": "^5.8.1",
     "prettier": "3.1.0",
-    "rcedit": "^4.0.1",
+    "resedit": "^2.0.0",
     "trayicon": "^1.2.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.2"

@@ -290,15 +290,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@malept/cross-spawn-promise@npm:^1.1.0":
-  version: 1.1.1
-  resolution: "@malept/cross-spawn-promise@npm:1.1.1"
-  dependencies:
-    cross-spawn: "npm:^7.0.1"
-  checksum: 74c427a152ffff0f19b74af6479d05bef1e996d5e081cfc3b8c47477b9240bd1c42a930884cbcd0c89ee3835201a3bd88d0b0bfd754c0cbb56fc84a28996a8e7
-  languageName: node
-  linkType: hard
-
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -729,18 +720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn-windows-exe@npm:^1.1.0":
-  version: 1.2.0
-  resolution: "cross-spawn-windows-exe@npm:1.2.0"
-  dependencies:
-    "@malept/cross-spawn-promise": "npm:^1.1.0"
-    is-wsl: "npm:^2.2.0"
-    which: "npm:^2.0.2"
-  checksum: 2e7cea1216038250b6adda8d3f13fbbf4f322a75a1eea65ac90f4ce361a233fc50b65ae521232df5d34ba4140e845065461d210d131fcb40cce3141f0cfb082f
-  languageName: node
-  linkType: hard
-
-"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.1":
+"cross-spawn@npm:^7.0.0":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -1337,15 +1317,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-docker@npm:^2.0.0":
-  version: 2.2.1
-  resolution: "is-docker@npm:2.2.1"
-  bin:
-    is-docker: cli.js
-  checksum: e828365958d155f90c409cdbe958f64051d99e8aedc2c8c4cd7c89dcf35329daed42f7b99346f7828df013e27deb8f721cf9408ba878c76eb9e8290235fbcdcc
-  languageName: node
-  linkType: hard
-
 "is-extglob@npm:^2.1.1":
   version: 2.1.1
   resolution: "is-extglob@npm:2.1.1"
@@ -1380,15 +1351,6 @@ __metadata:
   version: 7.0.0
   resolution: "is-number@npm:7.0.0"
   checksum: b4686d0d3053146095ccd45346461bc8e53b80aeb7671cc52a4de02dbbf7dc0d1d2a986e2fe4ae206984b4d34ef37e8b795ebc4f4295c978373e6575e295d811
-  languageName: node
-  linkType: hard
-
-"is-wsl@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "is-wsl@npm:2.2.0"
-  dependencies:
-    is-docker: "npm:^2.0.0"
-  checksum: a6fa2d370d21be487c0165c7a440d567274fbba1a817f2f0bfa41cc5e3af25041d84267baa22df66696956038a43973e72fca117918c91431920bdef490fa25e
   languageName: node
   linkType: hard
 
@@ -1803,6 +1765,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pe-library@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "pe-library@npm:1.0.0"
+  checksum: 697a39d3dd97cb0b859f6088689b72a58969f39145faaf478d7ac4be88602cd556f08c0ab8332d018f091c05de5848accb699fc20d358127127f5bded85074f1
+  languageName: node
+  linkType: hard
+
 "picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.3.1":
   version: 2.3.1
   resolution: "picomatch@npm:2.3.1"
@@ -1950,15 +1919,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rcedit@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "rcedit@npm:4.0.1"
-  dependencies:
-    cross-spawn-windows-exe: "npm:^1.1.0"
-  checksum: a0afd23390141513a4818b5b6e24d45507f75996234ba4abcdfbaf245753131a9adacc7b84541717dac947d51149aac8715cdf6f2020ae24b173d854c13ebdb3
-  languageName: node
-  linkType: hard
-
 "readable-stream@npm:^2.0.0, readable-stream@npm:^2.1.4":
   version: 2.3.8
   resolution: "readable-stream@npm:2.3.8"
@@ -1998,6 +1958,15 @@ __metadata:
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
   checksum: 83aa76a7bc1531f68d92c75a2ca2f54f1b01463cb566cf3fbc787d0de8be30c9dbc211d1d46be3497dac5785fe296f2dd11d531945ac29730643357978966e99
+  languageName: node
+  linkType: hard
+
+"resedit@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "resedit@npm:2.0.0"
+  dependencies:
+    pe-library: "npm:^1.0.0"
+  checksum: 35c7dba2ad22282b1c6c351fd547709d411c4e14675edff35d4fe03b0b635dbbd55b66aa656548dfbb604220d4c6a8cc6abbd78e41ed4f89a5e1981331c9756d
   languageName: node
   linkType: hard
 
@@ -2535,7 +2504,7 @@ __metadata:
     esbuild: "npm:^0.19.7"
     pkg: "npm:^5.8.1"
     prettier: "npm:3.1.0"
-    rcedit: "npm:^4.0.1"
+    resedit: "npm:^2.0.0"
     trayicon: "npm:^1.2.2"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.3.2"
@@ -2561,7 +2530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^2.0.1, which@npm:^2.0.2":
+"which@npm:^2.0.1":
   version: 2.0.2
   resolution: "which@npm:2.0.2"
   dependencies:
