@@ -2,11 +2,13 @@ import fs from "fs/promises";
 import { getPath } from "./Helpers";
 import { Backend } from "./Backend";
 import { Frontend } from "./Frontend";
+import { selectFile } from "./PathPicker";
 
 export class WaveSafe {
   frontend: Frontend;
   backend: Backend;
   activated = false;
+  options: any = [];
 
   consoleToggleItem: any;
 
@@ -18,41 +20,56 @@ export class WaveSafe {
   }
 
   addOptions() {
-    const intervall = this.frontend.tray.item("Intervall");
-
-    intervall.add(
-      this.frontend.tray.item("onChange", {
-        checked: true,
-      }),
-      this.frontend.tray.item("30 sec"),
-      this.frontend.tray.item("1 min"),
-      this.frontend.tray.item("2 min"),
-    );
-
-    this.consoleToggleItem = this.frontend.tray.item("Show Console", {
-      checked: false,
-      action: () => this.toggleConsole(),
+    this.frontend.addOption({
+      name: "selectSource",
+      label: "Select Source",
+      action: () => this.selectSource()
     });
 
-    const quit = this.frontend.tray.item("Quit", () =>
-      this.frontend.tray.kill(),
-    );
+    // const intervall = this.frontend.tray.item("Intervall");
 
-    let devOnlyElements: any = [];
-    let releaseOnlyElements: any = [];
-    if (process.env.NODE_ENV == "development") {
-      devOnlyElements = [];
-    } else {
-      releaseOnlyElements = [this.consoleToggleItem];
-    }
+    // intervall.add(
+    //   this.frontend.tray.item("onChange", {
+    //     checked: true,
+    //   }),
+    //   this.frontend.tray.item("30 sec"),
+    //   this.frontend.tray.item("1 min"),
+    //   this.frontend.tray.item("2 min"),
+    // );
 
-    this.frontend.tray.setMenu(
-      intervall,
-      this.frontend.tray.separator(),
-      ...releaseOnlyElements,
-      ...devOnlyElements,
-      quit,
-    );
+    console.log(this.frontend.getOption("selectSource"));
+
+    this.frontend.addOption({
+      name: "toggleConsole",
+      label: "Show Console",
+      checked: false,
+      action: () => this.toggleConsole()
+    });
+    // this.consoleToggleItem = this.frontend.tray.item("Show Console", {
+    //   checked: false,
+    //   action: () => this.toggleConsole(),
+    // });
+
+    // const quit = this.frontend.tray.item("Quit", () =>
+    //   this.frontend.tray.kill(),
+    // );
+
+    // let devOnlyElements: any = [];
+    // let releaseOnlyElements: any = [];
+    // if (process.env.NODE_ENV == "development") {
+    //   devOnlyElements = [];
+    // } else {
+    //   releaseOnlyElements = [this.consoleToggleItem];
+    // }
+
+    // this.frontend.tray.setMenu(
+    //   this.options.selectSource,
+    //   intervall,
+    //   this.frontend.tray.separator(),
+    //   ...releaseOnlyElements,
+    //   ...devOnlyElements,
+    //   quit,
+    // );
   }
 
   toggleConsole() {
@@ -61,12 +78,35 @@ export class WaveSafe {
 
   hideConsole() {
     this.backend.hide();
-    this.consoleToggleItem.checked = false;
+    this.frontend.setAttributeOnOption("toggleConsole", "checked", false);
   }
 
   showConsole() {
     this.backend.show();
-    this.consoleToggleItem.checked = true;
+    this.frontend.setAttributeOnOption("toggleConsole", "checked", true);
+  }
+
+  async selectSource() {
+    const filePath = await selectFile({
+      title: "Select My Source",
+      filter: {
+        items: [
+          {
+            name: "Waves LV1 Backup File",
+            extension: "*.dat",
+          }
+        ],
+        index: 1,
+      },
+    }).catch((err) => {
+    });
+    if (filePath) {
+      console.log(filePath);
+      this.options.selectSource = this.frontend.tray.item(filePath, () => this.selectSource());
+      this.frontend.tray.setMenu(
+        this.options.selectSource
+      );
+    }
   }
 
   async toggleActivation() {
