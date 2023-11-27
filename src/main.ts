@@ -8,6 +8,9 @@ import { Frontend } from "./modules/Frontend";
 import { Backend } from "./modules/Backend";
 import { WaveSafe } from "./modules/WaveSafe";
 
+import fsSync from "fs";
+const packageJSON = JSON.parse(fsSync.readFileSync("package.json").toString());
+
 (async () => {
   if (process.env.NODE_ENV != "development") {
     console.log("Checking if already running...");
@@ -18,18 +21,22 @@ import { WaveSafe } from "./modules/WaveSafe";
     }
   }
 
-  console.log("Starting WaveSafe...")
-  console.log(
-    await getImageAsAscii(getPath("public/idle.png"), {
-      width: 28,
-      height: 28,
-    }),
-  );
-  await timeout(200);
-  console.log("Started! Hiding console...");
+  console.log("Starting WaveSafe...");
 
-  await timeout(1000);
-  
+  if (process.env.NODE_ENV != "development") {
+    console.log(
+      await getImageAsAscii(getPath("public/idle.png"), {
+        width: 28,
+        height: 28,
+      }),
+    );
+    await timeout(200);
+  }
+
+  console.log(`WaveSafe version ${packageJSON.version} started!`);
+
+  if (process.env.NODE_ENV != "development") await timeout(1000);
+
   const App = new WaveSafe(
     new Backend(),
     await new Frontend().initialize({

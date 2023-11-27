@@ -49,7 +49,7 @@ export async function isAlreadyRunning() {
         let count = 0;
         resultList.forEach(function (process: any) {
           if (process) {
-            count++; 
+            count++;
           }
         });
         resolve(count > 1);

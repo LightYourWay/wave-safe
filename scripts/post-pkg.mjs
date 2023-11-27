@@ -1,13 +1,14 @@
 import fs from "fs";
+import fse from "fs-extra";
 import * as ResEdit from "resedit";
 import * as childProcess from "child_process";
 
-console.log("Rebuilding node-hide-console-window for dev mode");
-// rebuild for current node version so that it works in dev mode
-childProcess.execSync(
-  `node-gyp rebuild --target=${process.versions.node} --arch=x64`,
-  { cwd: "node_modules/node-hide-console-window", stdio: "inherit" },
+console.log(
+  "Restoring cached build of node-hide-console-window addon for development...",
 );
+await fse.copy("build/nhcw-dev", "node_modules/node-hide-console-window", {
+  overwrite: true,
+});
 
 const packageJSON = JSON.parse(fs.readFileSync("package.json"));
 

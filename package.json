@@ -27,8 +27,10 @@
   },
   "homepage": "https://github.com/LightYourWay/wave-safe#readme",
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.10.0",
     "esbuild": "^0.19.7",
+    "fs-extra": "^11.1.1",
     "node-gyp": "^10.0.1",
     "pkg": "^5.8.1",
     "prettier": "3.1.0",

@@ -36,10 +36,20 @@ export class WaveSafe {
     const quit = this.frontend.tray.item("Quit", () =>
       this.frontend.tray.kill(),
     );
+
+    let devOnlyElements: any = [];
+    let releaseOnlyElements: any = [];
+    if (process.env.NODE_ENV == "development") {
+      devOnlyElements = [];
+    } else {
+      releaseOnlyElements = [this.consoleToggleItem];
+    }
+
     this.frontend.tray.setMenu(
       intervall,
       this.frontend.tray.separator(),
-      this.consoleToggleItem,
+      ...releaseOnlyElements,
+      ...devOnlyElements,
       quit,
     );
   }
@@ -51,13 +61,11 @@ export class WaveSafe {
   hideConsole() {
     this.backend.hide();
     this.consoleToggleItem.checked = false;
-    console.log("Console: hidden");
   }
 
   showConsole() {
     this.backend.show();
     this.consoleToggleItem.checked = true;
-    console.log("Console: visible");
   }
 
   toggleActivation() {
