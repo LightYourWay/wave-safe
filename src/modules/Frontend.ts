@@ -46,9 +46,8 @@ export class Frontend {
       name: "quit",
       label: "Quit",
       action: () => this.tray.kill(),
-    }
+    },
   ];
-
 
   addOption(option: trayItem) {
     this.options.push(option);
@@ -92,12 +91,14 @@ export class Frontend {
       if (option.isSeparator) {
         userItems.push(this.tray.separator());
       } else {
-        userItems.push(this.tray.item(option.label ? option.label : "", {
-          checked: option.checked ? option.checked : false,
-          disabled: option.disabled ? option.disabled : false,
-          bold: option.bold ? option.bold : false,
-          action: () => option.action ? option.action() : null,
-        }));
+        userItems.push(
+          this.tray.item(option.label ? option.label : "", {
+            checked: option.checked ? option.checked : false,
+            disabled: option.disabled ? option.disabled : false,
+            bold: option.bold ? option.bold : false,
+            action: () => (option.action ? option.action() : null),
+          }),
+        );
       }
     }
 
@@ -106,12 +107,14 @@ export class Frontend {
       if (option.isSeparator) {
         defaultItems.push(this.tray.separator());
       } else {
-        defaultItems.push(this.tray.item(option.label ? option.label : "", {
-          checked: option.checked ? option.checked : false,
-          disabled: option.disabled ? option.disabled : false,
-          bold: option.bold ? option.bold : false,
-          action: () => option.action ? option.action() : null,
-        }));
+        defaultItems.push(
+          this.tray.item(option.label ? option.label : "", {
+            checked: option.checked ? option.checked : false,
+            disabled: option.disabled ? option.disabled : false,
+            bold: option.bold ? option.bold : false,
+            action: () => (option.action ? option.action() : null),
+          }),
+        );
       }
     }
 

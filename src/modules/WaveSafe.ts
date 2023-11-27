@@ -23,7 +23,7 @@ export class WaveSafe {
     this.frontend.addOption({
       name: "selectSource",
       label: "Select Source",
-      action: () => this.selectSource()
+      action: () => this.selectSource(),
     });
 
     // const intervall = this.frontend.tray.item("Intervall");
@@ -43,7 +43,7 @@ export class WaveSafe {
       name: "toggleConsole",
       label: "Show Console",
       checked: false,
-      action: () => this.toggleConsole()
+      action: () => this.toggleConsole(),
     });
     // this.consoleToggleItem = this.frontend.tray.item("Show Console", {
     //   checked: false,
@@ -94,18 +94,17 @@ export class WaveSafe {
           {
             name: "Waves LV1 Backup File",
             extension: "*.dat",
-          }
+          },
         ],
         index: 1,
       },
-    }).catch((err) => {
-    });
+    }).catch((err) => {});
     if (filePath) {
       console.log(filePath);
-      this.options.selectSource = this.frontend.tray.item(filePath, () => this.selectSource());
-      this.frontend.tray.setMenu(
-        this.options.selectSource
+      this.options.selectSource = this.frontend.tray.item(filePath, () =>
+        this.selectSource(),
       );
+      this.frontend.tray.setMenu(this.options.selectSource);
     }
   }
 

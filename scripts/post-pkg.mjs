@@ -110,8 +110,7 @@ while (true) {
         {
           type: "confirm",
           name: "retry",
-          message:
-            `The path \`${releasePath}\` is currently blocked. Please stop the the application! Ready to try again?`,
+          message: `The path \`${releasePath}\` is currently blocked. Please stop the the application! Ready to try again?`,
           default: true,
         },
       ])
