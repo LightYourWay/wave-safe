@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import fse from "fs-extra";
 import * as ResEdit from "resedit";
 import * as childProcess from "child_process";
+import inquirer from "inquirer";
 
 const { default: packageJSON } = await import("../package.json", {
   assert: {
@@ -118,9 +119,30 @@ if (!fse.existsSync("build/nhcw-pkg")) {
 console.log(
   "Using cached build of node-hide-console-window addon for packageing...",
 );
-await fse.copy("build/nhcw-pkg", "node_modules/node-hide-console-window", {
-  overwrite: true,
-});
+while (true) {
+  try {
+    await fse.copy("build/nhcw-pkg", "node_modules/node-hide-console-window", {
+      overwrite: true,
+    });
+    break;
+  } catch (error) {
+    await inquirer
+      .prompt([
+        {
+          type: "confirm",
+          name: "retry",
+          message:
+            "The path `node_modules/node-hide-console-window` is currently blocked. Please stop the the dev environment! Ready to try again?",
+          default: true,
+        },
+      ])
+      .then((answers) => {
+        if (!answers.retry) {
+          process.exit(1);
+        }
+      });
+  }
+}
 
 console.log("Copying public files");
 if (!fse.existsSync("build/public")) {
@@ -132,5 +154,8 @@ await fs.copyFile("public/idle.png", "build/public/idle.png");
 await fs.copyFile("public/inactive.png", "build/public/inactive.png");
 
 await fs.copyFile("public/active.png", "build/public/active.png");
+
+console.log("Copying package.json");
+await fs.copyFile("package.json", "build/package.json");
 
 console.log("Done");

@@ -1,14 +1,35 @@
 import fs from "fs";
 import fse from "fs-extra";
 import * as ResEdit from "resedit";
-import * as childProcess from "child_process";
+import inquirer from "inquirer";
 
 console.log(
   "Restoring cached build of node-hide-console-window addon for development...",
 );
-await fse.copy("build/nhcw-dev", "node_modules/node-hide-console-window", {
-  overwrite: true,
-});
+while (true) {
+  try {
+    await fse.copy("build/nhcw-dev", "node_modules/node-hide-console-window", {
+      overwrite: true,
+    });
+    break;
+  } catch (error) {
+    await inquirer
+      .prompt([
+        {
+          type: "confirm",
+          name: "retry",
+          message:
+            "The path `node_modules/node-hide-console-window` is currently blocked. Please stop the the dev environment! Ready to try again?",
+          default: true,
+        },
+      ])
+      .then((answers) => {
+        if (!answers.retry) {
+          process.exit(1);
+        }
+      });
+  }
+}
 
 const packageJSON = JSON.parse(fs.readFileSync("package.json"));
 
@@ -79,9 +100,30 @@ if (buffer.length === 0) {
 }
 
 console.log("Writing new binary to", releasePath);
-fs.writeFileSync(releasePath, buffer);
+while (true) {
+  try {
+    fse.writeFileSync(releasePath, buffer);
+    break;
+  } catch (error) {
+    await inquirer
+      .prompt([
+        {
+          type: "confirm",
+          name: "retry",
+          message:
+            `The path \`${releasePath}\` is currently blocked. Please stop the the application! Ready to try again?`,
+          default: true,
+        },
+      ])
+      .then((answers) => {
+        if (!answers.retry) {
+          process.exit(1);
+        }
+      });
+  }
+}
 
 console.log("Removing temp binary", tempPath);
-fs.unlinkSync(tempPath);
+fse.unlinkSync(tempPath);
 
 console.log("Done");

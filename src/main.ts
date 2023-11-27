@@ -8,16 +8,23 @@ import { Frontend } from "./modules/Frontend";
 import { Backend } from "./modules/Backend";
 import { WaveSafe } from "./modules/WaveSafe";
 
-import fsSync from "fs";
-const packageJSON = JSON.parse(fsSync.readFileSync("package.json").toString());
+import path from "path";
+import fs from "fs";
+const packageJSON = JSON.parse(
+  fs.readFileSync(getPath("package.json")).toString(),
+);
+
+import { initStorage, storage } from "./modules/Storage";
 
 (async () => {
+  await initStorage();
+
   if (process.env.NODE_ENV != "development") {
     console.log("Checking if already running...");
     if (await isAlreadyRunning()) {
       console.log("Already running! Exiting...");
       await timeout(1000);
-      process.exit(0);
+      process.exit(1);
     }
   }
 

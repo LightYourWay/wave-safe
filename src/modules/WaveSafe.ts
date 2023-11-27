@@ -6,6 +6,7 @@ import { Frontend } from "./Frontend";
 export class WaveSafe {
   frontend: Frontend;
   backend: Backend;
+  activated = false;
 
   consoleToggleItem: any;
 
@@ -68,14 +69,15 @@ export class WaveSafe {
     this.consoleToggleItem.checked = true;
   }
 
-  toggleActivation() {
-    this.backend.visible ? this.deactivate() : this.activate();
-    console.log(`State: ${this.backend.visible ? "running" : "stopped"}`);
+  async toggleActivation() {
+    this.activated ? await this.deactivate() : await this.activate();
+    console.log(`State: ${this.activated ? "running" : "stopped"}`);
   }
 
   async activate() {
     this.frontend.tray.setIcon(await fs.readFile(getPath("public/active.png")));
     this.frontend.tray.notify("WaveSafe", "RUNNING");
+    this.activated = true;
   }
 
   async deactivate() {
@@ -83,5 +85,6 @@ export class WaveSafe {
       await fs.readFile(getPath("public/inactive.png")),
     );
     this.frontend.tray.notify("WaveSafe", "STOPPED");
+    this.activated = false;
   }
 }

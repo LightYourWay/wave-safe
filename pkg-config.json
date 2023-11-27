@@ -1,5 +1,5 @@
 {
   "pkg": {
-    "assets": ["build/rsrcs", "build/public"]
+    "assets": ["build/rsrcs", "build/public", "build/package.json"]
   }
 }
