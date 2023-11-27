@@ -1,5 +1,6 @@
 import path from "path";
 var asciify = require("asciify-image");
+var ps = require("ps-node");
 
 export async function timeout(ms: number) {
   return new Promise((resolve) => {
@@ -31,5 +32,28 @@ export function getImageAsAscii(
       .catch(function (err: any) {
         reject(err);
       });
+  });
+}
+
+export async function isAlreadyRunning() {
+  return new Promise((resolve, reject) => {
+    ps.lookup(
+      {
+        command: "WaveSafe",
+        arguments: "",
+      },
+      function (err: any, resultList: any) {
+        if (err) {
+          reject(err);
+        }
+        let count = 0;
+        resultList.forEach(function (process: any) {
+          if (process) {
+            count++; 
+          }
+        });
+        resolve(count > 1);
+      },
+    );
   });
 }
