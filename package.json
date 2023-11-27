@@ -8,12 +8,13 @@
   "main": "src/main.js",
   "bin": "src/main.js",
   "scripts": {
-    "build": "esbuild --platform=node --bundle src/main.ts --outfile=build/main.js && node scripts/copy-native-addons.mjs",
+    "lint": "npx prettier . --check",
+    "format": "npx prettier . --write",
     "start": "NODE_ENV=development ts-node-dev src/main.ts",
     "test": "node debug build/main.js",
-    "pkg": "pkg --debug --out-path dist --targets node16-win-x64 build/main.js --config pkg-config.json && node scripts/set-exe-icon.mjs",
-    "lint": "npx prettier . --check",
-    "format": "npx prettier . --write"
+    "build": "esbuild --platform=node --bundle src/main.ts --external:node-hide-console-window --outfile=build/main.js",
+    "pkg": "node scripts/pre-pkg.mjs && pkg --debug --out-path dist --targets node16-win-x64 build/main.js --config pkg-config.json && node scripts/post-pkg.mjs",
+    "ship": "npm run build && npm run pkg"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "esbuild": "^0.19.7",
+    "node-gyp": "^10.0.1",
     "pkg": "^5.8.1",
     "prettier": "3.1.0",
     "resedit": "^2.0.0",
@@ -36,12 +38,11 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
+    "asciify-image": "^0.1.10",
     "bindings": "^1.5.0",
     "chalk": "^5.3.0",
-    "chokidar": "^3.5.3"
+    "chokidar": "^3.5.3",
+    "node-hide-console-window": "^2.2.0"
   },
-  "packageManager": "yarn@4.0.2",
-  "resolutions": {
-    "windows-trayicon/node-gyp": "10.0.1"
-  }
+  "packageManager": "yarn@4.0.2"
 }

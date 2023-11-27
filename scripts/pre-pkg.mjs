@@ -1,8 +1,13 @@
 import fs from "fs/promises";
 import fsSync from "fs";
 import * as ResEdit from "resedit";
+import * as childProcess from "child_process";
 
-const packageJSON = JSON.parse(fsSync.readFileSync("package.json"));
+const { default: packageJSON } = await import("../package.json", {
+  assert: {
+    type: "json",
+  },
+});
 
 const tempPath = "node_modules/trayicon/rsrcs/trayicon.exe";
 const releasePath = "build/rsrcs/trayicon.exe";
@@ -12,7 +17,9 @@ if (!fsSync.existsSync("build/rsrcs")) {
 }
 
 console.log("Reading executable");
-let exe = ResEdit.NtExecutable.from(fsSync.readFileSync(tempPath), { ignoreCert: true });
+let exe = ResEdit.NtExecutable.from(fsSync.readFileSync(tempPath), {
+  ignoreCert: true,
+});
 
 console.log("Reading resources");
 let res = ResEdit.NtExecutableResource.from(exe);
@@ -29,13 +36,13 @@ vi.removeStringValue({ lang: 0, codepage: 1200 }, "OriginalFilename");
 vi.removeStringValue({ lang: 0, codepage: 1200 }, "InternalName");
 
 vi.setStringValues(
-    { lang: 0, codepage: 1200 },
-    {
-        FileDescription: `${packageJSON.productName} - Frontend`,
-        ProductName: packageJSON.productName,
-        CompanyName: packageJSON.company,
-        LegalCopyright: packageJSON.copyright,
-    }
+  { lang: 0, codepage: 1200 },
+  {
+    FileDescription: `${packageJSON.productName} - Frontend`,
+    ProductName: packageJSON.productName,
+    CompanyName: packageJSON.company,
+    LegalCopyright: packageJSON.copyright,
+  },
 );
 
 console.log("Writing version info");
@@ -43,14 +50,14 @@ vi.outputToResourceEntries(res.entries);
 
 console.log("Reading icon file");
 let iconFile = ResEdit.Data.IconFile.from(
-    fsSync.readFileSync("public/app.ico")
+  fsSync.readFileSync("public/app.ico"),
 );
 console.log("Replacing icons");
 ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
-    res.entries,
-    1,
-    0,
-    iconFile.icons.map((item) => item.data)
+  res.entries,
+  1,
+  0,
+  iconFile.icons.map((item) => item.data),
 );
 
 console.log("Writing resources");
@@ -60,7 +67,7 @@ console.log("Generating new binary");
 const newBinary = exe.generate();
 const buffer = Buffer.from(newBinary);
 if (buffer.length === 0) {
-    throw new Error("Failed to generate new binary. Buffer is empty.");
+  throw new Error("Failed to generate new binary. Buffer is empty.");
 }
 
 console.log("Writing new binary to", releasePath);
@@ -72,24 +79,22 @@ await fs.copyFile(
   "build/rsrcs/default.ico",
 );
 
+console.log("Rebuilding node-hide-console-window for pkg");
+// rebuild using node-gyp for node 16, because pkg doesn't support node >16
+childProcess.execSync(
+  "node-gyp rebuild --target=16.20.2 --arch=x64 --openssl_fips=''",
+  { cwd: "node_modules/node-hide-console-window", stdio: "inherit" },
+);
+
 console.log("Copying public files");
 if (!fsSync.existsSync("build/public")) {
   await fs.mkdir("build/public");
 }
 
-await fs.copyFile(
-  "public/idle.png",
-  "build/public/idle.png",
-);
+await fs.copyFile("public/idle.png", "build/public/idle.png");
 
-await fs.copyFile(
-  "public/inactive.png",
-  "build/public/inactive.png",
-);
+await fs.copyFile("public/inactive.png", "build/public/inactive.png");
 
-await fs.copyFile(
-  "public/active.png",
-  "build/public/active.png",
-);
+await fs.copyFile("public/active.png", "build/public/active.png");
 
 console.log("Done");
