@@ -77,7 +77,7 @@ export class Frontend {
     }
   }
 
-  setAttributeOnOption(name: string, attribute: string, value: any) {
+  setAttributeOnOption<T extends keyof trayItem>(name: string, attribute: T, value: trayItem[T]) {
     const index = this.options.findIndex((item) => item.name == name);
     if (index != -1) {
       this.options[index][attribute] = value;
