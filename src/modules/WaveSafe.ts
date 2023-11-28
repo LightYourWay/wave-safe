@@ -47,6 +47,7 @@ export class WaveSafe {
       new TrayItemSingle(this.frontend, {
         label: `WaveSafe v${packageJSON.version}`,
         disabled: true,
+        bold: true,
       }),
     );
 
