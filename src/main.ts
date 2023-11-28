@@ -18,6 +18,11 @@ import { initStorage, storage } from "./modules/Storage";
 
 (async () => {
   await initStorage();
+  const initialSourceFile = await storage.getItem("sourceFile");
+  const initialDestinationFolder = await storage.getItem("destinationFolder");
+  const inititalIntervall = await storage.getItem("intervall");
+  const initialKeep = await storage.getItem("keep");
+  const initialProjectName = await storage.getItem("project_name");
 
   if (process.env.NODE_ENV != "development") {
     console.log("Checking if already running...");
@@ -52,6 +57,13 @@ import { initStorage, storage } from "./modules/Storage";
       action: () => onTrayIconClick(),
       useTempDir: true,
     }),
+    {
+      initialSourceFile: initialSourceFile,
+      initialDestinationFolder: initialDestinationFolder,
+      initialIntervall: inititalIntervall,
+      initialKeep: initialKeep,
+      initialProjectName: initialProjectName,
+    },
   );
 
   function onTrayIconClick() {

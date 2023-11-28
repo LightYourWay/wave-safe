@@ -123,6 +123,26 @@ while (true) {
 }
 
 console.log("Removing temp binary", tempPath);
-fse.unlinkSync(tempPath);
+while (true) {
+  try {
+    fse.unlinkSync(tempPath);
+    break;
+  } catch (error) {
+    await inquirer
+      .prompt([
+        {
+          type: "confirm",
+          name: "retry",
+          message: `The path \`${tempPath}\` is currently blocked. Ready to try again?`,
+          default: true,
+        },
+      ])
+      .then((answers) => {
+        if (!answers.retry) {
+          process.exit(1);
+        }
+      });
+  }
+}
 
 console.log("Done");
