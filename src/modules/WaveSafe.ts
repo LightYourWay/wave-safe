@@ -43,10 +43,12 @@ export class WaveSafe {
     this.backend = backend;
     this.options = options || {};
 
-    this.frontend.registerItem(new TrayItemSingle(this.frontend, {
-      label: `WaveSafe v${packageJSON.version}`,
-      disabled: true,
-    }));
+    this.frontend.registerItem(
+      new TrayItemSingle(this.frontend, {
+        label: `WaveSafe v${packageJSON.version}`,
+        disabled: true,
+      }),
+    );
 
     this.frontend.registerItem(new TrayItemSeparator(this.frontend));
 
