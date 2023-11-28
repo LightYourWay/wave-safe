@@ -8,7 +8,6 @@ import { Frontend } from "./modules/Frontend";
 import { Backend } from "./modules/Backend";
 import { WaveSafe } from "./modules/WaveSafe";
 
-import path from "path";
 import fs from "fs";
 const packageJSON = JSON.parse(
   fs.readFileSync(getPath("package.json")).toString(),
@@ -52,7 +51,7 @@ import { initStorage, storage } from "./modules/Storage";
   const App = new WaveSafe(
     new Backend(),
     await new Frontend().initialize({
-      title: "WaveSafe",
+      title: `WaveSafe v${packageJSON.version}`,
       iconPath: getPath("public/idle.png"),
       action: () => onTrayIconClick(),
       useTempDir: true,

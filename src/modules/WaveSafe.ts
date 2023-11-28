@@ -9,6 +9,11 @@ import { TrayItemSeparator } from "./TrayItemSeparator";
 import { TrayItemMulti } from "./TrayItemMulti";
 import inquirer from "inquirer";
 
+import fse from "fs-extra";
+const packageJSON = JSON.parse(
+  fse.readFileSync(getPath("package.json")).toString(),
+);
+
 interface WaveSafeOptions {
   initialSourceFile?: string;
   initialDestinationFolder?: string;
@@ -37,6 +42,13 @@ export class WaveSafe {
     this.frontend = frontend;
     this.backend = backend;
     this.options = options || {};
+
+    this.frontend.registerItem(new TrayItemSingle(this.frontend, {
+      label: `WaveSafe v${packageJSON.version}`,
+      disabled: true,
+    }));
+
+    this.frontend.registerItem(new TrayItemSeparator(this.frontend));
 
     this.sourceSelector = new TrayItemSingle(this.frontend, {
       label: this.options.initialSourceFile
