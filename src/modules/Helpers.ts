@@ -1,3 +1,4 @@
+import { IFilterItem } from "../interfaces/IDialog";
 import path from "path";
 var asciify = require("asciify-image");
 var ps = require("ps-node");
@@ -55,5 +56,29 @@ export async function isAlreadyRunning() {
         resolve(count > 1);
       },
     );
+  });
+}
+
+export function filterToString(filter: IFilterItem[]) {
+  let filterString = "";
+  filter.forEach((item) => {
+    filterString += `${item.name}|${item.extension}|`;
+  });
+  filterString = filterString.slice(0, -1);
+  return filterString;
+}
+
+export function psSpawner(command: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    var spawn = require("child_process").spawn,
+      child: any;
+    child = spawn("powershell.exe", [command]);
+    child.stdout.on("data", function (data: any) {
+      resolve(data.toString());
+    });
+    child.stderr.on("data", function (data: any) {
+      reject(data.toString());
+    });
+    child.stdin.end();
   });
 }

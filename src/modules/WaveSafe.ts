@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import { getPath } from "./Helpers";
 import { Backend } from "./Backend";
 import { Frontend } from "./Frontend";
-import { selectFile } from "./PathPicker";
+import { getUserInput, selectFile, selectFolder } from "./Dialog";
 import { storage } from "./Storage";
 import { TrayItemSingle } from "./TrayItemSingle";
 import { TrayItemSeparator } from "./TrayItemSeparator";
@@ -202,30 +202,6 @@ export class WaveSafe {
     }
   }
 
-  async setProjectName() {
-    this.showConsole();
-
-    await inquirer
-      .prompt([
-        {
-          type: "input",
-          name: "projectName",
-          message: `Please enter a Project Name:`,
-        },
-      ])
-      .then((answers) => {
-        if (answers.projectName) {
-          this.hideConsole();
-          storage.setItem("project_name", answers.projectName);
-          this.nameSelector.label = `Project Name: ${answers.projectName}`;
-          this.nameSelector.bold = false;
-          this.nameSelector.checked = true;
-
-          this.updateStartButtonState();
-        }
-      });
-  }
-
   toggleConsole() {
     this.backend.visible ? this.hideConsole() : this.showConsole();
   }
@@ -241,8 +217,8 @@ export class WaveSafe {
   }
 
   async selectSource() {
-    const filePath = await selectFile({
-      title: "Select Source File",
+    await selectFile({
+      title: "WaveSafe | Select Source File",
       filter: {
         items: [
           {
@@ -250,52 +226,78 @@ export class WaveSafe {
             extension: "*.dat",
           },
         ],
-        index: 1,
+        index: 0,
       },
-    }).catch(async (err) => {
-      this.sourceSelector.checked = (await storage.getItem("sourceFile"))
-        ? true
-        : false;
-    });
-    if (filePath) {
-      storage.setItem("sourceFile", filePath.toString());
-      this.sourceSelector.label = `Selected Source: ${filePath.toString()}`;
-      this.sourceSelector.bold = false;
-      this.sourceSelector.checked = true;
+      initialDirectory: (await storage.getItem("sourceFile")) || undefined,
+      restoreDirectory: (await storage.getItem("sourceFile")) ? false : true,
+    })
+      .then(async (filePath) => {
+        if (filePath) {
+          await storage.setItem("sourceFile", filePath.toString());
+          this.sourceSelector.label = `Selected Source: ${filePath.toString()}`;
+          this.sourceSelector.bold = false;
+          this.sourceSelector.checked = true;
 
-      await this.updateStartButtonState();
-    }
+          await this.updateStartButtonState();
+        }
+      })
+      .catch(async (err) => {
+        this.sourceSelector.checked = (await storage.getItem("sourceFile"))
+          ? true
+          : false;
+      });
   }
 
   async selectDestination() {
-    const folderPath = await selectFile({
-      title: "Select Destination Folder",
-      filter: {
-        items: [
-          {
-            name: "Folder",
-            extension: "*",
-          },
-        ],
-        index: 1,
-      },
-    }).catch(async (err) => {
-      this.destinationSelector.checked = (await storage.getItem(
-        "destinationFolder",
-      ))
-        ? true
-        : false;
-    });
-    if (folderPath) {
-      storage.setItem("destinationFolder", folderPath.toString());
-      this.destinationSelector.label = `Selected Destination: ${folderPath.toString()}`;
-      this.destinationSelector.bold = false;
-      this.destinationSelector.checked = true;
-      this.nameSelector.disabled = false;
-      this.nameSelector.bold = true;
+    await selectFolder({
+      title: "WaveSafe | Select Destination Folder",
+      initialDirectory:
+        (await storage.getItem("destinationFolder")) || undefined,
+    })
+      .then(async (folderPath) => {
+        if (folderPath) {
+          await storage.setItem("destinationFolder", folderPath.toString());
+          this.destinationSelector.label = `Selected Destination: ${folderPath.toString()}`;
+          this.destinationSelector.bold = false;
+          this.destinationSelector.checked = true;
+          this.nameSelector.disabled = false;
+          if (!(await storage.getItem("project_name")))
+            this.nameSelector.bold = true;
 
-      await this.updateStartButtonState();
-    }
+          await this.updateStartButtonState();
+        }
+      })
+      .catch(async (err) => {
+        console.log(err);
+        this.destinationSelector.checked = (await storage.getItem(
+          "destinationFolder",
+        ))
+          ? true
+          : false;
+      });
+  }
+
+  async setProjectName() {
+    await getUserInput({
+      title: "WaveSafe | Set Project Name",
+      message: "Please enter a new project name:",
+      initialValue: await storage.getItem("project_name"),
+    })
+      .then((input) => {
+        if (input) {
+          storage.setItem("project_name", input);
+          this.nameSelector.label = `Project Name: ${input}`;
+          this.nameSelector.bold = false;
+          this.nameSelector.checked = true;
+
+          this.updateStartButtonState();
+        }
+      })
+      .catch(async (err) => {
+        this.nameSelector.checked = (await storage.getItem("project_name"))
+          ? true
+          : false;
+      });
   }
 
   async toggleActivation() {
