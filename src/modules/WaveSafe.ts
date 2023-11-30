@@ -268,7 +268,6 @@ export class WaveSafe {
         }
       })
       .catch(async (err) => {
-        console.log(err);
         this.destinationSelector.checked = (await storage.getItem(
           "destinationFolder",
         ))
