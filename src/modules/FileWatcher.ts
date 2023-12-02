@@ -1,11 +1,8 @@
 import * as chokidar from "chokidar";
-import {
-  decodeTimestamp,
-  encodeTimestamp,
-  sanitizeForWindowsFilename,
-} from "./Helpers";
+import { encodeTimestamp, sanitizeForWindowsFilename } from "./Helpers";
 import path from "path";
-import fs from "fs";
+import fs from "fs-extra";
+
 interface FileWatcherOptions {
   sourceFile: string;
   destinationFolder: string;
@@ -30,40 +27,42 @@ export class FileWatcher {
     this.watcher = chokidar
       .watch(this.options.sourceFile, chokidarOptions)
       .on("change", () => {
-        const timestamp = encodeTimestamp(new Date());
-        const sanitizedProjectName = sanitizeForWindowsFilename(
-          this.options.projectName,
-        );
-        const filename = `${timestamp}_${sanitizedProjectName}${this.options.fileExtension}`;
-        const destinationPath = path.join(
-          this.options.destinationFolder,
-          sanitizedProjectName,
-          filename,
-        );
-
-        console.log(
-          `Copying: ${this.options.sourceFile} to ${destinationPath}`,
-        );
-
-        // ensure destination folder exists
-        const destinationFolder = path.dirname(destinationPath);
-        if (!fs.existsSync(destinationFolder)) {
-          fs.mkdirSync(destinationFolder, { recursive: true });
-        }
-
-        // copy file
-        fs.copyFileSync(this.options.sourceFile, destinationPath);
-
-        // delete old files
-        const files = fs.readdirSync(destinationFolder);
-        files.sort();
-        files.reverse();
-        for (const file of files.slice(this.options.keep)) {
-          const filePath = path.join(destinationFolder, file);
-          console.log(`Deleting: ${filePath}`);
-          fs.unlinkSync(filePath);
-        }
+        this.createRollingBackup();
       });
+  }
+
+  async createRollingBackup() {
+    const timestamp = encodeTimestamp(new Date());
+    const sanitizedProjectName = sanitizeForWindowsFilename(
+      this.options.projectName,
+    );
+    const filename = `${timestamp}_${sanitizedProjectName}${this.options.fileExtension}`;
+    const destinationPath = path.join(
+      this.options.destinationFolder,
+      sanitizedProjectName,
+      filename,
+    );
+
+    console.log(`Copying: ${this.options.sourceFile} to ${destinationPath}`);
+
+    // ensure destination folder exists
+    const destinationFolder = path.dirname(destinationPath);
+    if (!(await fs.exists(destinationFolder))) {
+      await fs.mkdir(destinationFolder, { recursive: true });
+    }
+
+    // copy file
+    await fs.copyFile(this.options.sourceFile, destinationPath);
+
+    // delete old files
+    const files = await fs.readdir(destinationFolder);
+    files.sort();
+    files.reverse();
+    for (const file of files.slice(this.options.keep)) {
+      const filePath = path.join(destinationFolder, file);
+      console.log(`Deleting: ${filePath}`);
+      fs.unlink(filePath);
+    }
   }
 
   public stop() {
