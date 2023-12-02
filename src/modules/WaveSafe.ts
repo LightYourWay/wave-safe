@@ -10,6 +10,7 @@ import { TrayItemMulti } from "./TrayItemMulti";
 import inquirer from "inquirer";
 
 import fse from "fs-extra";
+import { FileWatcher } from "./FileWatcher";
 const packageJSON = JSON.parse(
   fse.readFileSync(getPath("package.json")).toString(),
 );
@@ -21,6 +22,8 @@ interface WaveSafeOptions {
   initialKeep?: number;
   initialProjectName?: string;
 }
+
+let fileWatcher: FileWatcher;
 
 export class WaveSafe {
   frontend: Frontend;
@@ -317,6 +320,17 @@ export class WaveSafe {
     this.frontend.tray.notify("WaveSafe", "RUNNING");
     this.activationToggle.label = "Stop";
     this.activated = true;
+
+    fileWatcher = new FileWatcher({
+      sourceFile: await storage.getItem("sourceFile"),
+      destinationFolder: await storage.getItem("destinationFolder"),
+      projectName: await storage.getItem("project_name"),
+      intervall:
+        this.intervallSelector.options[await storage.getItem("intervall")]
+          .value,
+      keep: this.keepSelector.options[await storage.getItem("keep")].value,
+      fileExtension: ".eu",
+    });
   }
 
   async deactivate() {
@@ -326,5 +340,7 @@ export class WaveSafe {
     this.frontend.tray.notify("WaveSafe", "STOPPED");
     this.activationToggle.label = "Start";
     this.activated = false;
+
+    fileWatcher.stop();
   }
 }

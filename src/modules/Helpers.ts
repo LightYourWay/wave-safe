@@ -82,3 +82,49 @@ export function psSpawner(command: string): Promise<string> {
     child.stdin.end();
   });
 }
+
+export function encodeTimestamp(timestamp: Date): string {
+  const now = new Date();
+
+  const year = now.getFullYear().toString().substr(-2);
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const day = now.getDate().toString().padStart(2, "0");
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+  const milliseconds = now.getMilliseconds().toString().padStart(3, "0");
+
+  return `${year}${month}${day}-${hours}${minutes}${seconds}${milliseconds}`;
+}
+
+export function decodeTimestamp(timestamp: string): Date {
+  const regex = /^(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})(\d{3})$/;
+  const match = timestamp.match(regex);
+
+  if (match) {
+    const year = parseInt(match[1], 10) + 2000; // Adjust based on century assumption
+    const month = parseInt(match[2], 10) - 1; // Months are 0-indexed in JavaScript
+    const day = parseInt(match[3], 10);
+    const hours = parseInt(match[4], 10);
+    const minutes = parseInt(match[5], 10);
+    const seconds = parseInt(match[6], 10);
+    const milliseconds = parseInt(match[7], 10);
+
+    return new Date(year, month, day, hours, minutes, seconds, milliseconds);
+  }
+
+  throw new Error(`Invalid timestamp: ${timestamp}`);
+}
+
+export function sanitizeForWindowsFilename(input: string): string {
+  // Replace spaces with dashes
+  let sanitized = input.replace(/ /g, "-");
+
+  // Remove forbidden characters
+  sanitized = sanitized.replace(/[<>:"\/\\|?*]/g, "");
+
+  // Trim trailing dashes and periods (since they can't be at the end of Windows filenames)
+  sanitized = sanitized.replace(/[-.]+$/, "");
+
+  return sanitized;
+}
