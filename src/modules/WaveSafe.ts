@@ -109,9 +109,10 @@ export class WaveSafe {
           value: 120,
         }),
       ],
-      initialOption: this.options.initialIntervall
-        ? this.options.initialIntervall
-        : 0,
+      initialOption:
+        this.options.initialIntervall != undefined
+          ? this.options.initialIntervall
+          : 0,
     });
     this.frontend.registerItem(this.intervallSelector);
 
@@ -135,7 +136,8 @@ export class WaveSafe {
           value: 100,
         }),
       ],
-      initialOption: this.options.initialKeep ? this.options.initialKeep : 1,
+      initialOption:
+        this.options.initialKeep != undefined ? this.options.initialKeep : 1,
     });
     this.frontend.registerItem(this.keepSelector);
 
