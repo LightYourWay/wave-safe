@@ -15,6 +15,7 @@ interface TrayItemMultiOptions {
 }
 
 export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
+  private _visibility: boolean = true;
   private _label: string;
   private _checked?: boolean;
   private _disabled?: boolean;
@@ -56,6 +57,15 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
       this.options.indexOf(this.selected),
     );
     this.label = `${this.initialLabel}: ${this.selected.label}`;
+  }
+
+  public set visibility(value: boolean) {
+    this._visibility = value;
+    this.frontend.redraw();
+  }
+
+  public get visibility(): boolean {
+    return this._visibility;
   }
 
   public set label(value: string) {

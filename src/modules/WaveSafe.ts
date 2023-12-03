@@ -263,6 +263,7 @@ export class WaveSafe {
           this.destinationSelector.label = `Selected Destination: ${folderPath.toString()}`;
           this.destinationSelector.bold = false;
           this.destinationSelector.checked = true;
+          this.backupFolderOpener.disabled = false;
           this.nameSelector.disabled = false;
           if (!(await storage.getItem("project_name")))
             this.nameSelector.bold = true;
@@ -316,11 +317,14 @@ export class WaveSafe {
   }
 
   async activate() {
-    this.frontend.tray.setIcon(await fs.readFile(getPath("public/active.png")));
-    this.frontend.tray.notify("WaveSafe", "RUNNING");
-    this.activationToggle.label = "Stop";
-    this.activated = true;
+    // disable user input
+    this.sourceSelector.disabled = true;
+    this.destinationSelector.disabled = true;
+    this.nameSelector.disabled = true;
+    this.intervallSelector.disabled = true;
+    this.keepSelector.disabled = true;
 
+    // start file watcher
     fileWatcher = new FileWatcher({
       sourceFile: await storage.getItem("sourceFile"),
       destinationFolder: await storage.getItem("destinationFolder"),
@@ -329,18 +333,33 @@ export class WaveSafe {
         this.intervallSelector.options[await storage.getItem("intervall")]
           .value,
       keep: this.keepSelector.options[await storage.getItem("keep")].value,
-      fileExtension: ".eu",
+      fileExtension: ".emo",
     });
+
+    // update tray icon and notify user
+    this.frontend.tray.setIcon(await fs.readFile(getPath("public/active.png")));
+    this.frontend.tray.notify("WaveSafe", "RUNNING");
+    this.activationToggle.label = "Stop";
+    this.activated = true;
   }
 
   async deactivate() {
+    // stop file watcher
+    fileWatcher.stop();
+
+    // enable user input
+    this.sourceSelector.disabled = false;
+    this.destinationSelector.disabled = false;
+    this.nameSelector.disabled = false;
+    this.intervallSelector.disabled = false;
+    this.keepSelector.disabled = false;
+
+    // update tray icon and notify user
     this.frontend.tray.setIcon(
       await fs.readFile(getPath("public/inactive.png")),
     );
     this.frontend.tray.notify("WaveSafe", "STOPPED");
     this.activationToggle.label = "Start";
     this.activated = false;
-
-    fileWatcher.stop();
   }
 }

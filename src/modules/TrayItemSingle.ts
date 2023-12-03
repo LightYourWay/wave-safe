@@ -11,6 +11,7 @@ interface TrayItemSingleOptions {
 }
 
 export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
+  private _visibility: boolean = true;
   private _label: string;
   private _checked?: boolean;
   private _disabled?: boolean;
@@ -26,6 +27,15 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
     this._bold = options.bold;
     this._action = options.action;
     this.value = options.value;
+  }
+
+  public set visibility(value: boolean) {
+    this._visibility = value;
+    this.frontend.redraw();
+  }
+
+  public get visibility(): boolean {
+    return this._visibility;
   }
 
   public set label(value: string) {

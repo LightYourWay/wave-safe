@@ -1,5 +1,6 @@
 interface IDialogOptions {
   title?: string;
+  visibility?: boolean;
 }
 
 export interface IFolderPickerOptions extends IDialogOptions {
