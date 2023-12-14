@@ -1,0 +1,68 @@
+diff --git a/index.d.ts b/index.d.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..e3a90c3dd72eda2f91e96b1f30a905b73895c2f3
+--- /dev/null
++++ b/index.d.ts
+@@ -0,0 +1,49 @@
++import { EventEmitter } from 'events';
++
++export interface TrayOptions {
++  title?: string;
++  icon?: Buffer;
++  debug?: boolean;
++  action?: Function;
++  useTempDir?: boolean | "clean";
++}
++
++export interface ItemOptions {
++  action?: Function;
++  label?: string;
++  disabled?: boolean;
++  checked?: boolean;
++  bold?: boolean;
++  type?: string;
++}
++
++export interface NotifyOptions {
++  title?: string;
++  msg?: string;
++  timeout?: number;
++  style?: 'info' | 'warn' | 'error';
++}
++
++export class Tray extends EventEmitter {
++  constructor(opts?: TrayOptions);
++  static create(opts?: TrayOptions, ready?: Function): Promise<Tray>;
++  setTitle(title: string): void;
++  setIcon(icon: Buffer): void;
++  setAction(action: Function): void;
++  notify(title: string, msg: string, action?: Function): void;
++  setMenu(...items: Item[]): void;
++  asXML(): string;
++  kill(): void;
++  separator(): Item;
++  item(label: string, props?: ItemOptions): Item;
++}
++
++export class Item {
++  constructor(label: string, props?: ItemOptions);
++  add(...items: Item[]): void;
++  asXML(): string;
++}
++
++export function create(opts?: TrayOptions, ready?: Function): Promise<Tray>;
++
++export default { create: Tray.create }
+\ No newline at end of file
+diff --git a/package.json b/package.json
+index 74594d98106e436d98fd541a6a4a003cf1a1cc3e..d7d958a994e815546de13842b0e2cda2779a285c 100644
+--- a/package.json
++++ b/package.json
+@@ -3,6 +3,7 @@
+   "version": "1.2.2",
+   "description": "",
+   "main": "index.js",
++  "types": "index.d.ts",
+   "directories": {
+     "example": "examples"
+   },
