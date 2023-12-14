@@ -1,20 +1,21 @@
-import { Frontend } from "./Frontend";
-import { TrayItem } from "./TrayItem";
+import { State } from "./State";
+import { Tray } from "./Tray";
+import { TrayItem, TrayItemOptions } from "./TrayItem";
 
 export class TrayItemSeparator extends TrayItem {
   private _visibility: boolean = true;
 
-  constructor(frontend: Frontend) {
-    super(frontend);
+  constructor(options?: TrayItemOptions) {
+    super(options);
   }
 
   create() {
-    return this.frontend.tray.separator();
+    return Tray.createSeparator();
   }
 
   public set visibility(value: boolean) {
     this._visibility = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get visibility(): boolean {

@@ -1,9 +1,9 @@
 import path from "path";
 
-export const storage = require("node-persist");
+export const Storage = require("node-persist");
 
-export async function initStorage() {
-  await storage.init({
+Storage.initialize = async function (): Promise<void> {
+  await Storage.init({
     dir: path.join(
       process.env.APPDATA ||
         (process.platform == "darwin"
@@ -12,4 +12,4 @@ export async function initStorage() {
       "WaveSafe",
     ),
   });
-}
+};

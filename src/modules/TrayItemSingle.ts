@@ -1,5 +1,6 @@
-import { Frontend } from "./Frontend";
-import { TrayItem } from "./TrayItem";
+import { State } from "./State";
+import { Tray } from "./Tray";
+import { TrayItem, TrayItemOptions } from "./TrayItem";
 
 interface TrayItemSingleOptions {
   label: string;
@@ -19,8 +20,8 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
   private _action?: () => void;
   value?: any;
 
-  constructor(frontend: Frontend, options: TrayItemSingleOptions) {
-    super(frontend);
+  constructor(options: TrayItemSingleOptions & TrayItemOptions) {
+    super(options);
     this._label = options.label;
     this._checked = options.checked;
     this._disabled = options.disabled;
@@ -31,7 +32,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set visibility(value: boolean) {
     this._visibility = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get visibility(): boolean {
@@ -40,7 +41,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set label(value: string) {
     this._label = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get label(): string {
@@ -49,7 +50,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set checked(value: boolean) {
     this._checked = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get checked(): boolean | undefined {
@@ -58,7 +59,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set disabled(value: boolean) {
     this._disabled = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get disabled(): boolean | undefined {
@@ -67,7 +68,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set bold(value: boolean) {
     this._bold = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get bold(): boolean | undefined {
@@ -76,7 +77,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
 
   public set action(value: () => void) {
     this._action = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get action(): (() => void) | undefined {
@@ -84,7 +85,7 @@ export class TrayItemSingle extends TrayItem implements TrayItemSingleOptions {
   }
 
   create() {
-    return this.frontend.tray.item(this._label, {
+    return Tray.createItem(this._label, {
       checked: this._checked,
       disabled: this._disabled,
       bold: this._bold,

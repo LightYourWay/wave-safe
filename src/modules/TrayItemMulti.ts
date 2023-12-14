@@ -1,7 +1,10 @@
-import { Frontend } from "./Frontend";
-import { storage } from "./Storage";
-import { TrayItem } from "./TrayItem";
+import { Tray } from "./Tray";
+import { Storage } from "./Storage";
+import { TrayItem, TrayItemOptions } from "./TrayItem";
 import { TrayItemSingle } from "./TrayItemSingle";
+import { State } from "./State";
+import { Config, MultiSelectOptions } from "./Config";
+import { camelize } from "./Helpers";
 
 interface TrayItemMultiOptions {
   label: string;
@@ -10,7 +13,7 @@ interface TrayItemMultiOptions {
   bold?: boolean;
   action?: () => void;
 
-  options: TrayItemSingle[];
+  selects: TrayItemSingle[];
   initialOption?: number;
 }
 
@@ -22,13 +25,13 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
   private _bold?: boolean;
   private _action?: () => void;
 
-  options: TrayItemSingle[];
+  selects: TrayItemSingle[];
   selected: TrayItemSingle;
 
   private initialLabel: string;
 
-  constructor(frontend: Frontend, options: TrayItemMultiOptions) {
-    super(frontend);
+  constructor(options: TrayItemMultiOptions & TrayItemOptions) {
+    super(options);
 
     this.initialLabel = options.label;
 
@@ -38,30 +41,30 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
     this._bold = options.bold;
     this._action = options.action;
 
-    this.options = options.options;
-    for (const option of this.options) {
+    this.selects = options.selects;
+    for (const option of this.selects) {
       option.action = () => this.select(option);
     }
 
-    this.selected = this.options[options.initialOption || 0];
+    this.selected = this.selects[options.initialOption || 0];
     this.select(this.selected);
   }
 
   select(option: TrayItemSingle) {
     this.selected = option;
-    for (const option of this.options) {
+    for (const option of this.selects) {
       option.checked = option === this.selected;
     }
-    storage.setItem(
-      this.initialLabel.toLowerCase().replace(" ", "_"),
-      this.options.indexOf(this.selected),
-    );
+
+    if (State?.initialized)
+      Config[camelize(this.initialLabel) as keyof MultiSelectOptions] =
+        this.selects.indexOf(this.selected);
     this.label = `${this.initialLabel}: ${this.selected.label}`;
   }
 
   public set visibility(value: boolean) {
     this._visibility = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get visibility(): boolean {
@@ -70,7 +73,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
 
   public set label(value: string) {
     this._label = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get label(): string {
@@ -79,7 +82,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
 
   public set checked(value: boolean) {
     this._checked = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get checked(): boolean | undefined {
@@ -88,7 +91,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
 
   public set disabled(value: boolean) {
     this._disabled = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get disabled(): boolean | undefined {
@@ -97,7 +100,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
 
   public set bold(value: boolean) {
     this._bold = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get bold(): boolean | undefined {
@@ -106,7 +109,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
 
   public set action(value: () => void) {
     this._action = value;
-    this.frontend.redraw();
+    this.gracefulRedraw();
   }
 
   public get action(): (() => void) | undefined {
@@ -114,7 +117,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
   }
 
   create() {
-    const mainItem = this.frontend.tray.item(this._label, {
+    const mainItem = Tray.createItem(this._label, {
       checked: this._checked,
       disabled: this._disabled,
       bold: this._bold,
@@ -122,7 +125,7 @@ export class TrayItemMulti extends TrayItem implements TrayItemMultiOptions {
     });
 
     let options: any = [];
-    for (const option of this.options) {
+    for (const option of this.selects) {
       options.push(option.create());
     }
     mainItem.add(...options);

@@ -1,10 +1,18 @@
-import { Frontend } from "./Frontend";
+import { State } from "./State";
+import { Tray } from "./Tray";
 
+export interface TrayItemOptions {
+  devModeOnly?: boolean;
+}
 export abstract class TrayItem {
-  protected frontend: Frontend;
+  public options: TrayItemOptions;
 
-  constructor(frontend: Frontend) {
-    this.frontend = frontend;
+  constructor(options?: TrayItemOptions) {
+    this.options = options || {};
+  }
+
+  protected gracefulRedraw() {
+    if (State?.initialized) Tray.redraw();
   }
 
   abstract create(): any;
