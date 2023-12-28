@@ -32,7 +32,6 @@ export const TrayItems = {
       ? `Project Name: ${Config.projectName}`
       : "Project Name",
     checked: Config.projectName ? true : false,
-    disabled: Config.projectName ? false : true,
     bold: Config.projectName ? false : true,
     action: () => WaveSafe.setProjectName(),
   }),
@@ -91,6 +90,7 @@ export const TrayItems = {
     label: "Show Console",
     checked: false,
     action: () => WaveSafe.toggleConsole(),
+    prodModeOnly: true,
   }),
   separator3: new TrayItemSeparator(),
   activationToggle: new TrayItemSingle({

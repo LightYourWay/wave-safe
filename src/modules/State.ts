@@ -1,3 +1,4 @@
+import { config } from "process";
 import { Config } from "./Config";
 import { Console } from "./Console";
 import { FileWatcher } from "./FileWatcher";
@@ -72,8 +73,6 @@ class ClosedState extends AppState {
   async initialize(): Promise<AppState> {
     console.log("Initializing");
 
-    await Config.initialize();
-
     if (!Config.isDev) {
       console.log("Checking if already running...");
       if (await isAlreadyRunning()) {
@@ -121,7 +120,15 @@ class InitializedState extends AppState {
 
   async configure(): Promise<AppState> {
     console.log("Configuring");
-    return new ConfiguredState();
+
+    if (Config.isValid()) {
+      console.log("Config is valid!");
+      TrayItems.activationToggle.disabled = false;
+      return new ConfiguredState();
+    }
+
+    console.log("Config is not valid!");
+    return this;
   }
 }
 
@@ -131,6 +138,11 @@ class ConfiguredState extends AppState {
   }
 
   async start(): Promise<AppState> {
+    if (!Config.isValid()) {
+      Tray.notify("WaveSafe", "NOT READY - Please configure first!");
+      return this;
+    }
+
     console.log("Starting");
 
     // disable user input

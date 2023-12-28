@@ -43,7 +43,7 @@ class AppHandler {
           TrayItems.sourceSelector.bold = false;
           TrayItems.sourceSelector.checked = true;
 
-          if (Config.isValid()) TrayItems.activationToggle.disabled = false;
+          State.configure();
         }
       })
       .catch((err) => {
@@ -66,7 +66,7 @@ class AppHandler {
           TrayItems.nameSelector.disabled = false;
           if (!Config.projectName) TrayItems.nameSelector.bold = true;
 
-          if (Config.isValid()) TrayItems.activationToggle.disabled = false;
+          State.configure();
         }
       })
       .catch((err) => {
@@ -89,7 +89,7 @@ class AppHandler {
           TrayItems.nameSelector.bold = false;
           TrayItems.nameSelector.checked = true;
 
-          if (Config.isValid()) TrayItems.activationToggle.disabled = false;
+          State.configure();
         }
       })
       .catch((err) => {
@@ -98,11 +98,6 @@ class AppHandler {
   }
 
   async toggleActivation() {
-    if (!Config.isValid()) {
-      Tray.notify("WaveSafe", "NOT READY - Please configure first!");
-      return;
-    }
-
     State.running ? await State.stop() : await State.start();
     console.log(`State: ${State.running ? "running" : "stopped"}`);
   }

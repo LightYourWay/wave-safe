@@ -6,7 +6,6 @@ import { TrayItemSeparator } from "./TrayItemSeparator";
 import { TrayItemSingle } from "./TrayItemSingle";
 import { TrayItems } from "./TrayItems";
 import { Config } from "./Config";
-import { State } from "./State";
 
 class TrayProxy {
   trayHandler: TrayHandlerType = {} as TrayHandlerType;
@@ -62,9 +61,10 @@ class TrayProxy {
     this.redraw();
   }
 
-  redraw() {
+  async redraw() {
     let userItems: any[] = [];
     for (const option of Object.values(TrayItems)) {
+      if (Config.isDev && option.options.prodModeOnly) continue;
       userItems.push(option.create());
     }
 

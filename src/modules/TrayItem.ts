@@ -3,6 +3,7 @@ import { Tray } from "./Tray";
 
 export interface TrayItemOptions {
   devModeOnly?: boolean;
+  prodModeOnly?: boolean;
 }
 export abstract class TrayItem {
   public options: TrayItemOptions;

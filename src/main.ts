@@ -1,3 +1,10 @@
-import { State } from "./modules/State";
+async function main() {
+  const { Config } = await import("./modules/Config");
+  await Config.initialize();
 
-State.initialize();
+  const { State } = await import("./modules/State");
+  await State.initialize();
+  await State.configure();
+}
+
+main();
