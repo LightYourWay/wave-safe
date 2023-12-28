@@ -6,6 +6,7 @@ import { TrayItemSeparator } from "./TrayItemSeparator";
 import { TrayItemSingle } from "./TrayItemSingle";
 import { TrayItems } from "./TrayItems";
 import { Config } from "./Config";
+import { State } from "./State";
 
 class TrayProxy {
   trayHandler: TrayHandlerType = {} as TrayHandlerType;
@@ -36,7 +37,10 @@ class TrayProxy {
     new TrayItemSeparator(),
     new TrayItemSingle({
       label: "Quit",
-      action: () => this.trayHandler.kill(),
+      action: () => {
+        State.stop();
+        this.trayHandler.kill();
+      },
     }),
   ];
 
