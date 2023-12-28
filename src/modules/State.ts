@@ -140,6 +140,27 @@ class ConfiguredState extends AppState {
   async start(): Promise<AppState> {
     if (!Config.isValid()) {
       Tray.notify("WaveSafe", "NOT READY - Please configure first!");
+
+      console.log("Config is not valid!");
+      TrayItems.activationToggle.checked = false;
+      return this;
+    }
+
+    // check if source file exists, notify user if not and returning this
+    if (!(await fs.stat(Config.sourceFile!).catch(() => false))) {
+      Tray.notify("WaveSafe", "NOT READY - Source file was not found!");
+
+      console.log("Source file was not found - please check!");
+      TrayItems.activationToggle.checked = false;
+      return this;
+    }
+
+    // check if destination folder exists, notify user if not and returning this
+    if (!(await fs.stat(Config.destinationFolder!).catch(() => false))) {
+      Tray.notify("WaveSafe", "NOT READY - Destination folder was not found!");
+
+      console.log("Destination was not found - please check!");
+      TrayItems.activationToggle.checked = false;
       return this;
     }
 
@@ -161,8 +182,8 @@ class ConfiguredState extends AppState {
   }
 }
 
-class RunningState extends AppState {
-  private fileWatcher: FileWatcher;
+export class RunningState extends AppState {
+  public fileWatcher: FileWatcher;
 
   constructor() {
     super();

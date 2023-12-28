@@ -1,6 +1,6 @@
 {
   "name": "wave-safe",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An windows taskbar app that automatically creates persistent rolling backups of a Waves LV1 instance on the network.",
   "productName": "WaveSafe",
   "company": "LightYourWay",
