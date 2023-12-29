@@ -2,6 +2,8 @@ import * as chokidar from "chokidar";
 import { encodeTimestamp, sanitizeForWindowsFilename } from "./Helpers";
 import path from "path";
 import fs from "fs-extra";
+import { State } from "./State";
+import { Tray } from "./Tray";
 
 interface FileWatcherOptions {
   sourceFile: string;
@@ -14,7 +16,8 @@ interface FileWatcherOptions {
 
 export class FileWatcher {
   options: FileWatcherOptions;
-  private watcher: chokidar.FSWatcher;
+  private sourceFileWatcher: chokidar.FSWatcher;
+  private destinationFolderWatcher: chokidar.FSWatcher;
 
   constructor(options: FileWatcherOptions) {
     this.options = options;
@@ -24,10 +27,37 @@ export class FileWatcher {
         this.options.intervall == 0 ? undefined : this.options.intervall * 1000,
     };
 
-    this.watcher = chokidar
+    this.sourceFileWatcher = chokidar
       .watch(this.options.sourceFile, chokidarOptions)
+      .on("add", () => {
+        this.createRollingBackup();
+      })
       .on("change", () => {
         this.createRollingBackup();
+      })
+      .on("unlink", () => {
+        Tray.notify("WaveSafe", "STOPPING - Source file went missing!");
+        State.stop();
+      })
+      .on("error", (error) => {
+        Tray.notify("WaveSafe", "STOPPING - Source Drive went missing!");
+        State.stop();
+      });
+
+    this.destinationFolderWatcher = chokidar
+      .watch(this.options.destinationFolder)
+      .on("unlinkDir", (path) => {
+        if (path === this.options.destinationFolder) {
+          Tray.notify(
+            "WaveSafe",
+            "STOPPING - Destination folder went missing!",
+          );
+          State.stop();
+        }
+      })
+      .on("error", (error) => {
+        Tray.notify("WaveSafe", "STOPPING - Destination Drive went missing!");
+        State.stop();
       });
   }
 
@@ -66,6 +96,7 @@ export class FileWatcher {
   }
 
   public stop() {
-    this.watcher.close();
+    this.sourceFileWatcher.close();
+    this.destinationFolderWatcher.close();
   }
 }
